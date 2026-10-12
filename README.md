@@ -1,6 +1,6 @@
 # LLM Judge Reliability Benchmark
 
-[![CI Pipeline](https://github.com/master72o/ai-training-project/actions/workflows/ci.yml/badge.svg)](https://github.com/master72o/ai-training-project/actions)
+[![CI Pipeline](https://github.com/master72o/llm-judge-reliability-benchmark/actions/workflows/ci.yml/badge.svg)](https://github.com/master72o/llm-judge-reliability-benchmark/actions)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -140,7 +140,7 @@ The benchmark executes a controlled 3x2 factorial ablation experiment evaluating
 
 ```bash
 # Clone repository
-git clone https://github.com/master72o/ai-training-project.git
+git clone https://github.com/master72o/llm-judge-reliability-benchmark.git
 cd llm-judge-reliability-benchmark
 
 # Activate virtual environment
