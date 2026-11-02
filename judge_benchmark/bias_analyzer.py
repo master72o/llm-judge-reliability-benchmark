@@ -45,6 +45,57 @@ class BiasAnalyzer:
         }
 
     @staticmethod
+    def analyze_harshness_and_leniency_drift(
+        records: List[JudgeEvaluationRecord],
+    ) -> Dict[str, Any]:
+        """
+        Measures systematic judge leniency or harshness relative to human ground truth:
+        mean signed error E[s_judge - s_human], false-approval rate, and calibration regime.
+        """
+        if not records:
+            return {
+                "mean_signed_error": 0.0,
+                "mean_absolute_error": 0.0,
+                "false_approval_rate": 0.0,
+                "false_rejection_rate": 0.0,
+                "calibration_regime": "CALIBRATED",
+            }
+
+        signed_diffs = [r.judge_score - r.human_score for r in records]
+        abs_diffs = [abs(d) for d in signed_diffs]
+        mean_signed = float(np.mean(signed_diffs))
+        mean_abs = float(np.mean(abs_diffs))
+
+        human_failed = [r for r in records if not r.passed_human]
+        human_passed = [r for r in records if r.passed_human]
+
+        false_approval_rate = (
+            sum(1 for r in human_failed if r.passed_judge) / len(human_failed)
+            if human_failed
+            else 0.0
+        )
+        false_rejection_rate = (
+            sum(1 for r in human_passed if not r.passed_judge) / len(human_passed)
+            if human_passed
+            else 0.0
+        )
+
+        if mean_signed > 0.10:
+            regime = "LENIENT_BIAS"
+        elif mean_signed < -0.10:
+            regime = "HARSH_BIAS"
+        else:
+            regime = "CALIBRATED"
+
+        return {
+            "mean_signed_error": round(mean_signed, 4),
+            "mean_absolute_error": round(mean_abs, 4),
+            "false_approval_rate": round(false_approval_rate, 4),
+            "false_rejection_rate": round(false_rejection_rate, 4),
+            "calibration_regime": regime,
+        }
+
+    @staticmethod
     def calculate_bias_suite(records: List[JudgeEvaluationRecord]) -> Dict[str, Any]:
         by_prompt: Dict[str, List[JudgeEvaluationRecord]] = {}
         for r in records:
